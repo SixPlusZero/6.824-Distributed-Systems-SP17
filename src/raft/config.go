@@ -80,6 +80,7 @@ func make_config(t *testing.T, n int, unreliable bool) *config {
 
 // shut down a Raft server but save its persistent state.
 func (cfg *config) crash1(i int) {
+	// fmt.Printf("crash(%d)\n", i)
 	cfg.disconnect(i)
 	cfg.net.DeleteServer(i) // disable client connections to the server.
 
@@ -107,6 +108,7 @@ func (cfg *config) crash1(i int) {
 		cfg.saved[i] = &Persister{}
 		cfg.saved[i].SaveRaftState(raftlog)
 	}
+	// fmt.Printf("crash(%d) completed\n", i)
 }
 
 //
@@ -117,6 +119,7 @@ func (cfg *config) crash1(i int) {
 // this server. since we cannot really kill it.
 //
 func (cfg *config) start1(i int) {
+	// fmt.Printf("start(%d)\n", i)
 	cfg.crash1(i)
 
 	// a fresh set of outgoing ClientEnd names.
@@ -193,6 +196,7 @@ func (cfg *config) start1(i int) {
 	srv := labrpc.MakeServer()
 	srv.AddService(svc)
 	cfg.net.AddServer(i, srv)
+	// fmt.Printf("start(%d) completed\n", i)
 }
 
 func (cfg *config) cleanup() {
@@ -207,7 +211,6 @@ func (cfg *config) cleanup() {
 // attach server i to the net.
 func (cfg *config) connect(i int) {
 	// fmt.Printf("connect(%d)\n", i)
-
 	cfg.connected[i] = true
 
 	// outgoing ClientEnds
@@ -230,7 +233,6 @@ func (cfg *config) connect(i int) {
 // detach server i from the net.
 func (cfg *config) disconnect(i int) {
 	// fmt.Printf("disconnect(%d)\n", i)
-
 	cfg.connected[i] = false
 
 	// outgoing ClientEnds
